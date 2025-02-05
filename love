@@ -1,0 +1,63 @@
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+#include <iostream>
+
+int main() {
+    // Create a window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Daphné - Lovely Animation", sf::Style::Close);
+    
+    // Load font
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) { // Replace with a fancy font if available
+        std::cerr << "Could not load font\n";
+        return -1;
+    }
+
+    // Create text
+    sf::Text text("Daphné", font, 80);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(250, 250);
+
+    // Background Color Variables
+    sf::Clock clock;
+    
+    // Heart Shape
+    sf::CircleShape heart(50, 3); // Triangle-like shape
+    heart.setFillColor(sf::Color(255, 105, 180)); // Pinkish color
+    heart.setPosition(350, 150);
+    heart.rotate(180); // Make it a heart-like structure
+
+    // Animation Variables
+    float speed = 100.0f;
+    float direction = 1.0f;
+
+    // Main loop
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // Animate background color smoothly
+        float time = clock.getElapsedTime().asSeconds();
+        sf::Color bgColor(127 + 127 * sin(time), 127 + 127 * sin(time + 2), 255);
+
+        // Make text bounce slightly
+        text.setPosition(250, 250 + 10 * sin(time * 2));
+
+        // Move the heart up and down
+        heart.move(0, direction * speed * 0.01);
+        if (heart.getPosition().y < 140 || heart.getPosition().y > 160)
+            direction *= -1;
+
+        // Clear and draw
+        window.clear(bgColor);
+        window.draw(text);
+        window.draw(heart);
+        window.display();
+    }
+
+    return 0;
+}
